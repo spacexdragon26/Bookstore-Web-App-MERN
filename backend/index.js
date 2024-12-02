@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request } from "express";
 import {PORT, mongodbURL} from "./config.js";
 import mongoose from "mongoose";
 import {Book} from "./models/bookModel.js"
@@ -48,7 +48,60 @@ app.post('/books', async (request, response) => {
 })
 
 //route for getting all the books
-//app.get('/books')
+app.get('/books', async (request, response) => {
+  try{
+   const books = await Book.find({});
+   return response.status(200).json({
+    count : books.length,
+    data : books
+   });
+  }catch(error){
+    console.error(error.message)
+    return response.status(500).send({message: error.message})
+  }
+})
+
+//getting books by id
+app.get('/books/:id', async (request, response) => {
+  try{
+
+    const { id } = request.params;
+   const book = await Book.findById(id);
+   return response.status(200).json(book);
+
+  }catch(error){
+    console.error(error.message)
+    return response.status(500).send({message: error.message})
+  }
+})
+
+
+//update a book using id
+app.put("/books/:id", async (request, response) => {
+  try{
+    
+    const { title, author, publishYear, genre } = request.body;
+    // Check for required fields
+    if (!title || !author || !publishYear || !genre) {
+        return response.status(400).send({
+          message: "Send all the required fields: title, author, publishYear, genre",
+        });
+      }
+
+      const { id } = request.params;
+      const result = await Book.findByIdAndUpdate(id, request.body,  { new: true });
+
+      if(!result){
+        return response.status(404).json("Book not found!")
+      }
+
+      return response.status(200).json("Book updates sucessfully!")
+  }
+  catch(error){
+    console.error(error.message)
+    return response.status(500).send({message: error.message})
+  }
+});
 
 mongoose.connect(mongodbURL)
 .then( () => {
