@@ -8,6 +8,15 @@ const app = express();
 // Middleware to parse JSON request body
 app.use(express.json());
 
+//handling cors
+//option1: default allows all origins by (*)
+app.use(cors(
+  {
+    origin : 'http://localhost:3000',
+    methods : ['GET', 'PUT', 'POST', 'DELETE'],
+    allowedHeaders : ['Content-Type'],
+  }
+));
 
 //using router
 app.use('/books', booksRoute);
