@@ -2,7 +2,7 @@ import express, { request } from "express";
 import {PORT, mongodbURL} from "./config.js";
 import mongoose from "mongoose";
 import booksRoute from './routes/booksRoute.js'
-
+import cors from 'cors';
 const app = express();
 
 // Middleware to parse JSON request body
@@ -12,7 +12,7 @@ app.use(express.json());
 //option1: default allows all origins by (*)
 app.use(cors(
   {
-    origin : 'http://localhost:3000',
+    origin : 'http://localhost:5173',
     methods : ['GET', 'PUT', 'POST', 'DELETE'],
     allowedHeaders : ['Content-Type'],
   }
